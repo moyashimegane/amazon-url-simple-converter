@@ -70,6 +70,8 @@ function isAmazonHost(hostname) {
  * Amazon以外・ASIN未検出・既に正規化済みの場合は、書き換え不要として`null`を返す。
  * @param {chrome.tabs.Tab} tab 対象タブ
  * @returns {string|null} 遷移先URL。書き換え不要なら`null`
+ * @throws {TypeError} `tab.url`が不正なURL文字列の場合、`new URL()`が例外を投げる
+ *   （呼び出し側の`try`/`catch`で捕捉する想定）
  */
 function resolveTargetUrl(tab) {
   const currentUrl = tab.url;
