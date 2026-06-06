@@ -6,6 +6,39 @@
  */
 
 /**
+ * 商品ページでよく使われるパスからASIN（10桁の英数字）を抽出する正規表現。
+ * `/dp/`・`/gp/product/`・`/gp/aw/d/`・`/gp/offer-listing/`・`/product-reviews/`・
+ * `/ASIN/`の各パターンを1本に統合している。
+ * モジュールトップレベルに置き、呼び出しごとの再生成を避ける。
+ * @type {RegExp}
+ */
+const ASIN_PATH_RE =
+  /\/(?:dp|gp\/product|gp\/aw\/d|gp\/offer-listing|product-reviews|ASIN)\/([A-Z0-9]{10})/i;
+
+/**
+ * 単体のASINコード（10桁の英数字）かどうかを判定する正規表現。
+ * クエリ値やパスセグメントのフォールバック判定に使う。
+ * @type {RegExp}
+ */
+const ASIN_CODE_RE = /^[A-Z0-9]{10}$/i;
+
+/**
+ * ASINが乗りうるクエリパラメータのキー一覧。
+ * @type {readonly string[]}
+ */
+const ASIN_QUERY_KEYS = ["asin", "ASIN"];
+
+/**
+ * Amazonの登録ドメインかどうかを判定する正規表現。
+ * `amazon.<tld>`（例: `amazon.com`）または`amazon.<tld>.<cc>`（例: `amazon.co.jp`、
+ * `amazon.com.au`）が末尾にあり、かつ`amazon`の直前が文字列先頭またはドット区切りで
+ * あることを要求する。これにより`notamazon.com`や`amazon.evil.com`、`amazonaws.com`
+ * のような非Amazonドメインを除外する。
+ * @type {RegExp}
+ */
+const AMAZON_HOST_RE = /(^|\.)amazon\.[a-z]{2,3}(\.[a-z]{2})?$/i;
+
+/**
  * ASINから正規化済みの`/dp/`形式URLを組み立てる。
  * @param {string} asin 10桁のASIN
  * @returns {string} `https://www.amazon.co.jp/dp/<ASIN>/`
@@ -27,42 +60,33 @@ function normalizeDpLink(asin) {
 function findASINInURL(u) {
   const path = u.pathname;
 
-  // 1. 商品ページでよく使われるパスパターン
-  const patterns = [
-    /\/dp\/([A-Z0-9]{10})/i,
-    /\/gp\/product\/([A-Z0-9]{10})/i,
-    /\/gp\/aw\/d\/([A-Z0-9]{10})/i,
-    /\/gp\/offer-listing\/([A-Z0-9]{10})/i,
-    /\/product-reviews\/([A-Z0-9]{10})/i,
-    /\/ASIN\/([A-Z0-9]{10})/i,
-  ];
-  for (const re of patterns) {
-    const m = path.match(re);
-    if (m && m[1]) return m[1].toUpperCase();
-  }
+  // 1. 商品ページでよく使われるパスパターン（統合済みの`ASIN_PATH_RE`で一括判定）
+  const m = path.match(ASIN_PATH_RE);
+  if (m && m[1]) return m[1].toUpperCase();
 
   // 2. クエリ文字列に asin / ASIN が乗っているケース
-  for (const key of ["asin", "ASIN"]) {
+  for (const key of ASIN_QUERY_KEYS) {
     const v = u.searchParams.get(key);
-    if (v && /^[A-Z0-9]{10}$/i.test(v)) return v.toUpperCase();
+    if (v && ASIN_CODE_RE.test(v)) return v.toUpperCase();
   }
 
   // 3. 上記で取れない場合、パスセグメントから10桁コードを総当たりで探す
-  const segs = path.split("/");
-  for (const seg of segs) {
-    if (/^[A-Z0-9]{10}$/i.test(seg)) return seg.toUpperCase();
+  for (const seg of path.split("/")) {
+    if (ASIN_CODE_RE.test(seg)) return seg.toUpperCase();
   }
 
   return null;
 }
 
 /**
- * ホスト名がAmazonドメインかどうかを判定する。
+ * ホスト名がAmazonの登録ドメインかどうかを判定する。
+ * 部分一致ではなく`AMAZON_HOST_RE`で末尾の登録ドメインを照合するため、
+ * `notamazon.com`や`amazon.evil.com`のような非Amazonドメインでは`false`を返す。
  * @param {string} hostname URLのホスト名
  * @returns {boolean}
  */
 function isAmazonHost(hostname) {
-  return /amazon\./i.test(hostname);
+  return AMAZON_HOST_RE.test(hostname);
 }
 
 /**
