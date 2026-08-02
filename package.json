@@ -1,0 +1,11 @@
+{
+  "name": "amazon-url-simple-converter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Chrome拡張機能。AmazonのURLを/dp/ASIN/形式へ正規化する",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  }
+}
