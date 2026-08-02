@@ -72,6 +72,50 @@ describe("resolveTargetUrl", () => {
   it("urlが無いタブではnullを返す", () => {
     assert.equal(resolveTargetUrl({id: 1}), null);
   });
+
+  describe("ASINではない10桁コードを商品IDと誤認しない", () => {
+    const cases = [
+      ["ストアページID", "https://www.amazon.co.jp/stores/page/ABCDEFGHIJ"],
+      ["小文字のパススラッグ", "https://www.amazon.co.jp/hogehoge12/x"],
+      ["数字始まりのキャンペーンスラッグ", "https://www.amazon.co.jp/2026summer/deals"],
+    ];
+
+    for (const [name, input] of cases) {
+      it(name, () => {
+        assert.equal(resolveTargetUrl(tab(input)), null);
+      });
+    }
+  });
+
+  describe("商品ページ以外のAmazonサービスでは動かない", () => {
+    const cases = [
+      ["Amazon Music", "https://music.amazon.co.jp/albums/B0ABCDEFGH"],
+      ["Kindle Cloud Reader", "https://read.amazon.co.jp/?asin=B0BXXXXXXX"],
+      ["Prime Video", "https://www.primevideo.com/detail/B0ABCDEFGH"],
+    ];
+
+    for (const [name, input] of cases) {
+      it(name, () => {
+        assert.equal(resolveTargetUrl(tab(input)), null);
+      });
+    }
+  });
+
+  describe("書籍のASIN（ISBN-10）を扱える", () => {
+    it("数字10桁", () => {
+      assert.equal(
+        resolveTargetUrl(tab("https://www.amazon.co.jp/dp/4048930842/ref=x")),
+        "https://www.amazon.co.jp/dp/4048930842/",
+      );
+    });
+
+    it("チェックディジットがXで終わる", () => {
+      assert.equal(
+        resolveTargetUrl(tab("https://www.amazon.co.jp/dp/477418411X")),
+        "https://www.amazon.co.jp/dp/477418411X/",
+      );
+    });
+  });
 });
 
 describe("isAmazonHost", () => {
@@ -93,6 +137,17 @@ describe("isAmazonHost", () => {
       "amazon.evil.com",
       "console.amazonaws.com",
       "amazon.co.jp.evil.com",
+    ]) {
+      assert.equal(isAmazonHost(host), false, host);
+    }
+  });
+
+  it("商品ページを持たないサービスのサブドメインを拒否する", () => {
+    for (const host of [
+      "music.amazon.co.jp",
+      "read.amazon.co.jp",
+      "aws.amazon.com",
+      "sellercentral.amazon.co.jp",
     ]) {
       assert.equal(isAmazonHost(host), false, host);
     }
