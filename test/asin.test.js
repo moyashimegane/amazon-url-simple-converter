@@ -132,11 +132,41 @@ describe("resolveTargetUrl", () => {
       ["末尾スラッシュあり", "https://www.amazon.co.jp/dp/B09XS7JWHH/"],
       ["末尾スラッシュなし", "https://www.amazon.co.jp/dp/B09XS7JWHH"],
       ["amazon.comで末尾スラッシュなし", "https://www.amazon.com/dp/B09XS7JWHH"],
+      // Amazonのスクリプトが付ける`?th=1`・`?psc=1`は正規化済みとみなす
+      ["Amazonが付けたth", "https://www.amazon.co.jp/dp/B09XS7JWHH?th=1"],
+      ["末尾スラッシュとth", "https://www.amazon.co.jp/dp/B09XS7JWHH/?th=1"],
+      ["thとpsc", "https://www.amazon.co.jp/dp/B09XS7JWHH/?th=1&psc=1"],
     ];
 
     for (const [name, input] of cases) {
       it(name, () => {
         assert.equal(resolveTargetUrl(tab(input)), null);
+      });
+    }
+  });
+
+  describe("自動付与以外のクエリは除去する", () => {
+    const cases = [
+      [
+        "thと一緒にrefが付いている",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH?th=1&ref=abc",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+      [
+        "アフィリエイトタグが付いている",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH?tag=example-22",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+      [
+        "フラグメントが付いている",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH#customerReviews",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+    ];
+
+    for (const [name, input, expected] of cases) {
+      it(name, () => {
+        assert.equal(resolveTargetUrl(tab(input)), expected);
       });
     }
   });
