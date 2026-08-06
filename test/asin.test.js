@@ -28,6 +28,21 @@ describe("resolveTargetUrl", () => {
         "https://www.amazon.co.jp/dp/B09XS7JWHH/",
       ],
       [
+        "/gp/aw/d/形式（モバイル）",
+        "https://www.amazon.co.jp/gp/aw/d/B09XS7JWHH",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+      [
+        "/gp/offer-listing/形式（出品者一覧）",
+        "https://www.amazon.co.jp/gp/offer-listing/B09XS7JWHH/ref=x",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+      [
+        "/ASIN/形式",
+        "https://www.amazon.co.jp/ASIN/B09XS7JWHH",
+        "https://www.amazon.co.jp/dp/B09XS7JWHH/",
+      ],
+      [
         "言語切り替えの/-/en/が挟まっている",
         "https://www.amazon.co.jp/-/en/dp/B09XS7JWHH",
         "https://www.amazon.co.jp/dp/B09XS7JWHH/",
