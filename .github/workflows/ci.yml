@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # 依存パッケージが無いため`npm ci`は行わない
+      - name: ユニットテスト
+        run: npm test
+
+      - name: manifest.jsonがJSONとして妥当か検証
+        run: node --input-type=module -e "import {readFileSync} from 'node:fs'; JSON.parse(readFileSync('manifest.json', 'utf8'));"
