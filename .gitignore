@@ -49,6 +49,11 @@ Session.vim
 # Sublime Text
 *.sublime-workspace
 
+# ===== AI coding tools =====
+
+# Claude Code（worktree・ローカル設定などが生成される）
+.claude/
+
 # ===== Logs / dependencies =====
 node_modules/
 *.log
