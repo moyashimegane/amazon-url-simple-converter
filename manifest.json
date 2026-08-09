@@ -1,8 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "amazonUrlSimpleConverter",
+    "name": "ASIN URL Shortener",
     "version": "1.0.0",
-    "description": "Click to rewrite current Amazon tab to https://www.amazon.co.jp/dp/ASIN/",
+    "description": "AmazonのURLを/dp/<ASIN>/形式へ短縮する非公式ツール。外部の短縮サービスは使いません。",
+    "homepage_url": "https://github.com/moyashimegane/amazon-url-simple-converter",
     "permissions": [
         "activeTab"
     ],
@@ -13,7 +14,7 @@
         "128": "icons/icon128.png"
     },
     "action": {
-        "default_title": "Amazon URLを /dp/ に正規化",
+        "default_title": "URLを/dp/<ASIN>/へ短縮",
         "default_icon": {
             "16": "icons/icon16.png",
             "32": "icons/icon32.png",
