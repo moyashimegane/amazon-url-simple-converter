@@ -1,4 +1,13 @@
+<p align="center">
+  <img src="icons/icon128.png" width="96" alt="ASIN URL Shortener">
+</p>
+
 # ASIN URL Shortener
+
+<p align="center">
+  <a href="https://github.com/moyashimegane/amazon-url-simple-converter/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/moyashimegane/amazon-url-simple-converter/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+</p>
 
 開いているAmazonタブのURLを`/dp/<ASIN>/`形式へ正規化するChrome拡張機能（Manifest V3）です。
 
@@ -26,7 +35,7 @@
 ## 使い方
 
 1. Amazonの商品ページ（または商品レビュー・出品者一覧など、ASINを含むページ）を開く
-2. ツールバーのアイコンをクリックする
+2. ツールバーの<img src="icons/icon128.png" width="18" align="absmiddle" alt="">アイコンをクリックする
 3. 現在のタブが`https://<閲覧中のAmazonドメイン>/dp/<ASIN>/`に書き換わる
 
 ASINが見つからないページや、すでに正規化済みのURLでは何も起こりません（UIは表示しません）。
@@ -36,12 +45,12 @@ ASINが見つからないページや、すでに正規化済みのURLでは何�
 次のいずれかからASINを抽出します。ASINとして扱うのは`B`で始まる10文字、または書籍のISBN-10（数字9桁＋`0`-`9`か`X`）の2系統です。
 
 - パス内のパターン
-  - `/dp/<ASIN>`
-  - `/gp/product/<ASIN>`
-  - `/gp/aw/d/<ASIN>`
-  - `/gp/offer-listing/<ASIN>`
-  - `/product-reviews/<ASIN>`
-  - `/ASIN/<ASIN>`
+    - `/dp/<ASIN>`
+    - `/gp/product/<ASIN>`
+    - `/gp/aw/d/<ASIN>`
+    - `/gp/offer-listing/<ASIN>`
+    - `/product-reviews/<ASIN>`
+    - `/ASIN/<ASIN>`
 - クエリパラメータ`asin`または`ASIN`
 
 任意のパスセグメントから10桁コードを探すフォールバック走査は行いません。ストアページIDやURLスラッグを商品IDと誤認するためです。
@@ -71,7 +80,7 @@ ASINが見つからないページや、すでに正規化済みのURLでは何�
 
 ユニットテストはNode.js標準の`node --test`で実行します。依存パッケージはありません。
 
-```
+```sh
 npm test
 ```
 
