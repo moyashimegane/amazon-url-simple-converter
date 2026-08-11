@@ -1,8 +1,10 @@
-# amazonUrlSimpleConverter
+# ASIN URL Shortener
 
 開いているAmazonタブのURLを`/dp/<ASIN>/`形式へ正規化するChrome拡張機能（Manifest V3）です。
 
 トラッキングパラメータや商品名で長くなったAmazonのURLを、ツールバーアイコンのワンクリックで最小限のクリーンなURLに書き換えます。
+
+![アイコンをクリックすると、長いAmazonの商品URLが/dp/ASIN/形式へ短縮される](docs/screenshot.png)
 
 ## 特徴
 
